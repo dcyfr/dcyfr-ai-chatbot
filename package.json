@@ -1,0 +1,84 @@
+{
+  "name": "@dcyfr/ai-chatbot",
+  "version": "0.1.0",
+  "description": "Conversational AI chatbot template - DCYFR AI starter",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./chat": {
+      "import": "./dist/chat/index.js",
+      "types": "./dist/chat/index.d.ts"
+    },
+    "./memory": {
+      "import": "./dist/memory/index.js",
+      "types": "./dist/memory/index.d.ts"
+    },
+    "./streaming": {
+      "import": "./dist/streaming/index.js",
+      "types": "./dist/streaming/index.d.ts"
+    },
+    "./middleware": {
+      "import": "./dist/middleware/index.js",
+      "types": "./dist/middleware/index.d.ts"
+    },
+    "./providers": {
+      "import": "./dist/providers/index.js",
+      "types": "./dist/providers/index.d.ts"
+    },
+    "./plugins": {
+      "import": "./dist/plugins/index.js",
+      "types": "./dist/plugins/index.d.ts"
+    }
+  },
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "test": "vitest",
+    "test:run": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "lint": "eslint src --ext .ts",
+    "lint:fix": "eslint src --ext .ts --fix",
+    "type-check": "tsc --noEmit",
+    "example:simple": "tsx examples/simple-chat/index.ts",
+    "example:streaming": "tsx examples/streaming-chat/index.ts",
+    "example:advanced": "tsx examples/advanced-chat/index.ts"
+  },
+  "keywords": [
+    "ai",
+    "chatbot",
+    "conversational",
+    "llm",
+    "streaming",
+    "dcyfr",
+    "template",
+    "starter"
+  ],
+  "author": "DCYFR",
+  "license": "MIT",
+  "dependencies": {
+    "zod": "^3.23.8"
+  },
+  "peerDependencies": {
+    "@dcyfr/ai": "^0.1.0"
+  },
+  "peerDependenciesMeta": {
+    "@dcyfr/ai": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "@vitest/coverage-v8": "^2.1.8",
+    "tsx": "^4.19.0",
+    "typescript": "~5.7.3",
+    "vitest": "^2.1.8"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}
