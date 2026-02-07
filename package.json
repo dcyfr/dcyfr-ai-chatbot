@@ -46,7 +46,8 @@
     "type-check": "tsc --noEmit",
     "example:simple": "tsx examples/simple-chat/index.ts",
     "example:streaming": "tsx examples/streaming-chat/index.ts",
-    "example:advanced": "tsx examples/advanced-chat/index.ts"
+    "example:advanced": "tsx examples/advanced-chat/index.ts",
+    "typecheck": "tsc --noEmit"
   },
   "keywords": [
     "ai",
