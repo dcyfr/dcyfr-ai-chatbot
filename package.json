@@ -1,6 +1,6 @@
 {
   "name": "@dcyfr/ai-chatbot",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "Conversational AI chatbot template - DCYFR AI starter",
   "type": "module",
   "main": "./dist/index.js",
