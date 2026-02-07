@@ -35,6 +35,11 @@
       "types": "./dist/plugins/index.d.ts"
     }
   },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "build": "tsc",
@@ -47,7 +52,9 @@
     "example:simple": "tsx examples/simple-chat/index.ts",
     "example:streaming": "tsx examples/streaming-chat/index.ts",
     "example:advanced": "tsx examples/advanced-chat/index.ts",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist",
+    "prepublishOnly": "npm run clean && npm run build && npm run test:run"
   },
   "keywords": [
     "ai",
@@ -61,6 +68,17 @@
   ],
   "author": "DCYFR",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dcyfr/dcyfr-ai-chatbot.git"
+  },
+  "homepage": "https://github.com/dcyfr/dcyfr-ai-chatbot#readme",
+  "bugs": {
+    "url": "https://github.com/dcyfr/dcyfr-ai-chatbot/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "dependencies": {
     "zod": "^3.23.8"
   },
