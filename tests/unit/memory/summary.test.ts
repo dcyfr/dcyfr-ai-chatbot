@@ -98,4 +98,74 @@ describe('SummaryMemory', () => {
     const summary = customMemory.getSummary('conv-1');
     expect(summary).toContain('Custom summary');
   });
+
+  it('should return stats for empty conversation', async () => {
+    const stats = await memory.getStats('non-existent');
+    
+    expect(stats.conversationId).toBe('non-existent');
+    expect(stats.messageCount).toBe(0);
+    expect(stats.estimatedTokens).toBe(0);
+    expect(stats.oldestMessageTimestamp).toBeUndefined();
+    expect(stats.newestMessageTimestamp).toBeUndefined();
+  });
+
+  it('should limit search results', async () => {
+    await memory.save('conv-1', [
+      createMessage('user', 'test message 1'),
+      createMessage('user', 'test message 2'),
+      createMessage('user', 'test message 3'),
+      createMessage('user', 'test message 4'),
+    ]);
+    
+    const results = await memory.search('conv-1', 'test', 2);
+    expect(results).toHaveLength(2);
+  });
+
+  it('should clear all conversations', async () => {
+    await memory.save('conv-1', [createMessage('user', 'Message 1')]);
+    await memory.save('conv-2', [createMessage('user', 'Message 2')]);
+    
+    await memory.clearAll();
+    
+    const context1 = await memory.getContext('conv-1');
+    const context2 = await memory.getContext('conv-2');
+    expect(context1).toHaveLength(0);
+    expect(context2).toHaveLength(0);
+  });
+
+  it('should handle token truncation with summary preserved', async () => {
+    const smallTokenMemory = new SummaryMemory({ recentCount: 2, maxTokens: 50 });
+    
+    // Add messages to trigger summarization and truncation
+    await smallTokenMemory.save('conv-1', [createMessage('user', 'A'.repeat(100))]);
+    await smallTokenMemory.save('conv-1', [createMessage('assistant', 'B'.repeat(100))]);
+    await smallTokenMemory.save('conv-1', [createMessage('user', 'C'.repeat(100))]);
+    
+    // getContext should apply token truncation
+    const context = await smallTokenMemory.getContext('conv-1');
+    
+    // Should have some messages, but truncated to fit maxTokens
+    expect(context.length).toBeGreaterThan(0);
+    const summary = smallTokenMemory.getSummary('conv-1');
+    expect(summary).toBeDefined();
+  });
+
+  it('should truncate long content in default summarizer', async () => {
+    const memory2 = new SummaryMemory({ recentCount: 1 });
+    
+    // Create a very long message to trigger truncation in default summarizer
+    const longContent = 'A'.repeat(600);
+    await memory2.save('conv-1', [createMessage('user', longContent)]);
+    await memory2.save('conv-1', [createMessage('user', 'Trigger summarization')]);
+    
+    const summary = memory2.getSummary('conv-1');
+    expect(summary).toBeDefined();
+    expect(summary!.length).toBeLessThanOrEqual(500);
+    expect(summary).toContain('...');
+  });
+
+  it('should search in non-existent conversation', async () => {
+    const results = await memory.search('non-existent', 'query');
+    expect(results).toHaveLength(0);
+  });
 });

@@ -86,4 +86,23 @@ describe('InMemoryStorage', () => {
     const context = await storage.getContext('conv-1', 1000);
     expect(context.length).toBe(1);
   });
+
+  it('should return stats for empty conversation', async () => {
+    const stats = await storage.getStats('conv-empty');
+    expect(stats.conversationId).toBe('conv-empty');
+    expect(stats.messageCount).toBe(0);
+    expect(stats.estimatedTokens).toBe(0);
+    expect(stats.oldestMessageTimestamp).toBeUndefined();
+    expect(stats.newestMessageTimestamp).toBeUndefined();
+  });
+
+  it('should return getContext for non-existent conversation', async () => {
+    const context = await storage.getContext('non-existent', 1000);
+    expect(context).toEqual([]);
+  });
+
+  it('should search in non-existent conversation', async () => {
+    const results = await storage.search('non-existent', 'test');
+    expect(results).toEqual([]);
+  });
 });
