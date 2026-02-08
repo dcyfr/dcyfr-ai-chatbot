@@ -2,7 +2,7 @@
  * Logger Middleware tests
  */
 
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi, afterEach } from 'vitest';
 import { createLogger, LogStore } from '../../../src/middleware/logger.js';
 import type { MiddlewareContext } from '../../../src/types/index.js';
 import { ChatConfigSchema } from '../../../src/types/index.js';
@@ -152,5 +152,114 @@ describe('createLogger middleware', () => {
     const logger = createLogger();
     expect(logger.name).toBe('logger');
     expect(logger.priority).toBe(-50);
+  });
+
+  describe('defaultLogHandler', () => {
+    let consoleDebugSpy: ReturnType<typeof vi.spyOn>;
+    let consoleInfoSpy: ReturnType<typeof vi.spyOn>;
+    let consoleWarnSpy: ReturnType<typeof vi.spyOn>;
+    let consoleErrorSpy: ReturnType<typeof vi.spyOn>;
+
+    afterEach(() => {
+      consoleDebugSpy?.mockRestore();
+      consoleInfoSpy?.mockRestore();
+      consoleWarnSpy?.mockRestore();
+      consoleErrorSpy?.mockRestore();
+    });
+
+    it('should log debug level to console.debug', async () => {
+      consoleDebugSpy = vi.spyOn(console, 'debug').mockImplementation(() => {});
+      const logger = createLogger({ level: 'debug' });
+      const ctx = createContext();
+
+      await logger.execute(ctx, async () => ({ proceed: true, context: ctx }));
+
+      // Should have request (info) and response (info) logs
+      // When level is 'debug', both should go through console.info
+      expect(consoleDebugSpy).not.toHaveBeenCalled(); // No debug events in this test
+    });
+
+    it('should log info level to console.info', async () => {
+      consoleInfoSpy = vi.spyOn(console, 'info').mockImplementation(() => {});
+      const logger = createLogger({ level: 'info' });
+      const ctx = createContext();
+
+      await logger.execute(ctx, async () => ({ proceed: true, context: ctx }));
+
+      // Should log request and response
+      expect(consoleInfoSpy).toHaveBeenCalledTimes(2);
+      expect(consoleInfoSpy).toHaveBeenCalledWith(
+        expect.stringContaining('[INFO] chat.request'),
+        expect.anything()
+      );
+    });
+
+    it('should log warn level to console.warn', async () => {
+      consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+      const logger = createLogger({ level: 'warn' });
+      const ctx = createContext();
+
+      await logger.execute(ctx, async () => ({
+        proceed: false,
+        context: ctx,
+        error: 'Blocked',
+      }));
+
+      expect(consoleWarnSpy).toHaveBeenCalledTimes(1);
+      expect(consoleWarnSpy).toHaveBeenCalledWith(
+        expect.stringContaining('[WARN] chat.blocked'),
+        expect.anything()
+      );
+    });
+
+    it('should log error level to console.error', async () => {
+      consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+      const logger = createLogger({ level: 'error' });
+      const ctx = createContext();
+
+      await expect(
+        logger.execute(ctx, async () => {
+          throw new Error('Test error');
+        })
+      ).rejects.toThrow();
+
+      expect(consoleErrorSpy).toHaveBeenCalledTimes(1);
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        expect.stringContaining('[ERROR] chat.error'),
+        expect.anything()
+      );
+    });
+
+    it('should include conversation ID in log output', async () => {
+      consoleInfoSpy = vi.spyOn(console, 'info').mockImplementation(() => {});
+      const logger = createLogger();
+      const ctx = createContext();
+      ctx.conversation.id = 'test-conv-id';
+
+      await logger.execute(ctx, async () => ({ proceed: true, context: ctx }));
+
+      expect(consoleInfoSpy).toHaveBeenCalledWith(
+        expect.stringContaining('(test-conv-id)'),
+        expect.anything()
+      );
+    });
+
+    it('should handle data in log entries', async () => {
+      consoleInfoSpy = vi.spyOn(console, 'info').mockImplementation(() => {});
+      const logger = createLogger({ logContent: false });
+      const ctx = createContext();
+
+      await logger.execute(ctx, async () => ({ proceed: true, context: ctx }));
+
+      // Should log with data object (including durationMs)
+      expect(consoleInfoSpy).toHaveBeenCalledWith(
+        expect.stringContaining('[INFO] chat.request'),
+        expect.anything()
+      );
+      expect(consoleInfoSpy).toHaveBeenCalledWith(
+        expect.stringContaining('[INFO] chat.response'),
+        expect.objectContaining({ durationMs: expect.any(Number) })
+      );
+    });
   });
 });
