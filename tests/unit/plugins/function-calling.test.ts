@@ -167,4 +167,86 @@ describe('createFunctionCallingPlugin', () => {
     const result = await plugin.hooks.onAfterChat!(resp, ctx);
     expect(result).toBeDefined();
   });
+
+  it('should handle tool not found error', async () => {
+    const plugin = createFunctionCallingPlugin({
+      tools: [
+        defineTool('tool_a', 'Tool A', {}),
+      ],
+      autoExecute: true,
+    });
+
+    const resp = createMockResponse([
+      { id: 'call-1', name: 'nonexistent_tool', arguments: {} },
+    ]);
+    const ctx = createMockContext();
+
+    const result = await plugin.hooks.onAfterChat!(resp, ctx);
+    expect(result).toBeDefined();
+  });
+
+  it('should handle tool without execute function', async () => {
+    const plugin = createFunctionCallingPlugin({
+      tools: [
+        defineTool('readonly_tool', 'Read only tool', {}), // no execute
+      ],
+      autoExecute: true,
+    });
+
+    const resp = createMockResponse([
+      { id: 'call-1', name: 'readonly_tool', arguments: {} },
+    ]);
+    const ctx = createMockContext();
+
+    const result = await plugin.hooks.onAfterChat!(resp, ctx);
+    expect(result).toBeDefined();
+  });
+
+  it('should handle tool execution errors', async () => {
+    const errorHandler = vi.fn().mockRejectedValue(new Error('Tool failed'));
+
+    const plugin = createFunctionCallingPlugin({
+      tools: [
+        defineTool('failing_tool', 'Failing tool', {}, errorHandler),
+      ],
+      autoExecute: true,
+    });
+
+    const resp = createMockResponse([
+      { id: 'call-1', name: 'failing_tool', arguments: {} },
+    ]);
+    const ctx = createMockContext();
+
+    const result = await plugin.hooks.onAfterChat!(resp, ctx);
+    expect(result).toBeDefined();
+  });
+
+  it('should handle non-Error thrown from tool', async () => {
+    const stringErrorHandler = vi.fn().mockRejectedValue('String error');
+
+    const plugin = createFunctionCallingPlugin({
+      tools: [
+        defineTool('string_error_tool', 'String error tool', {}, stringErrorHandler),
+      ],
+      autoExecute: true,
+    });
+
+    const resp = createMockResponse([
+      { id: 'call-1', name: 'string_error_tool', arguments: {} },
+    ]);
+    const ctx = createMockContext();
+
+    const result = await plugin.hooks.onAfterChat!(resp, ctx);
+    expect(result).toBeDefined();
+  });
+
+  it('should not inject tools when no tools configured', async () => {
+    const plugin = createFunctionCallingPlugin({
+      tools: [],
+    });
+
+    const ctx = createMockContext();
+    const result = await plugin.hooks.onBeforeChat!(ctx);
+    expect(result.metadata['availableTools']).toBeUndefined();
+  });
 });
