@@ -4,6 +4,8 @@
 
 A comprehensive framework for building multi-turn conversational AI applications with streaming responses, memory management, middleware, and plugin support.
 
+> **📦 Starter Template** — This is a **starter template** for cloning, not an npm package. Use `git clone` or download the source to create your own chatbot application. This package is marked `private: true` and is not published to npm.
+
 ## Features
 
 - **Multi-turn Conversations** — Persistent conversation history with threading
