@@ -33,7 +33,7 @@ export interface SystemPromptPluginOptions {
  */
 export function createSystemPromptPlugin(options?: SystemPromptPluginOptions): Plugin {
   const personas = new Map<string, Persona>();
-  let activePersona: Persona | null = options?.defaultPersona ?? null;
+  const activePersona: Persona | null = options?.defaultPersona ?? null;
 
   // Register provided personas
   if (options?.personas) {
