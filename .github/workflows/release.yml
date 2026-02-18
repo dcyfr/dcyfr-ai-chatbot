@@ -5,10 +5,7 @@ on:
     branches:
       - main
 
-permissions:
-  contents: write
-  pull-requests: write
-  id-token: write
+permissions: {}
 
 env:
   NPM_CONFIG_PROVENANCE: true
@@ -16,6 +13,8 @@ env:
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -32,6 +31,10 @@ jobs:
     needs: build-and-test
     runs-on: ubuntu-latest
     environment: production
+    permissions:
+      contents: write
+      pull-requests: write
+      id-token: write
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
