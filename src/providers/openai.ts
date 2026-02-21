@@ -80,23 +80,13 @@ export class OpenAIProvider implements ChatProvider {
         buffer = lines.pop() ?? '';
 
         for (const line of lines) {
-          const trimmed = line.trim();
-          if (!trimmed || !trimmed.startsWith('data: ')) continue;
-
-          const data = trimmed.slice(6);
-          if (data === '[DONE]') {
+          const chunk = this.parseStreamLine(line);
+          if (chunk === 'done') {
             yield createStreamChunk('done', null);
             return;
           }
-
-          try {
-            const parsed = JSON.parse(data) as OpenAIStreamChunk;
-            const delta = parsed.choices[0]?.delta;
-            if (delta?.content) {
-              yield createStreamChunk('token', delta.content);
-            }
-          } catch {
-            // Skip malformed JSON lines
+          if (chunk !== null) {
+            yield createStreamChunk('token', chunk);
           }
         }
       }
@@ -105,6 +95,21 @@ export class OpenAIProvider implements ChatProvider {
     }
 
     yield createStreamChunk('done', null);
+  }
+
+  /** Parse one SSE line, returning token content, 'done', or null to skip. */
+  private parseStreamLine(line: string): string | 'done' | null {
+    const trimmed = line.trim();
+    if (!trimmed || !trimmed.startsWith('data: ')) return null;
+    const data = trimmed.slice(6);
+    if (data === '[DONE]') return 'done';
+    try {
+      const parsed = JSON.parse(data) as OpenAIStreamChunk;
+      const delta = parsed.choices[0]?.delta;
+      return delta?.content ?? null;
+    } catch {
+      return null; // Skip malformed JSON lines
+    }
   }
 
   private async fetchCompletion(

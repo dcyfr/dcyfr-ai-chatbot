@@ -83,11 +83,7 @@ export class ChatEngine {
     };
 
     // Run before-chat plugins
-    for (const plugin of this.plugins) {
-      if (plugin.hooks.onBeforeChat) {
-        context = await plugin.hooks.onBeforeChat(context);
-      }
-    }
+    context = await this.runBeforeChatPlugins(context);
 
     // Execute middleware pipeline
     const middlewareResult = await this.executeMiddleware(context);
@@ -148,20 +144,12 @@ export class ChatEngine {
       };
 
       // Run after-chat plugins
-      for (const plugin of this.plugins) {
-        if (plugin.hooks.onAfterChat) {
-          response = await plugin.hooks.onAfterChat(response, context);
-        }
-      }
+      response = await this.runAfterChatPlugins(response, context);
 
       return response;
     } catch (error) {
       // Run error plugins
-      for (const plugin of this.plugins) {
-        if (plugin.hooks.onError) {
-          await plugin.hooks.onError(error as Error, context);
-        }
-      }
+      await this.runErrorPlugins(error as Error, context);
       throw error;
     }
   }
@@ -212,6 +200,38 @@ export class ChatEngine {
         tokens: estimateTokens(fullContent),
       });
       this.conversations.addMessage(conversation.id, assistantMessage);
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  // Plugin runner helpers (reduce complexity of chat())
+  // ---------------------------------------------------------------------------
+
+  private async runBeforeChatPlugins(context: MiddlewareContext): Promise<MiddlewareContext> {
+    let ctx = context;
+    for (const plugin of this.plugins) {
+      if (plugin.hooks.onBeforeChat) {
+        ctx = await plugin.hooks.onBeforeChat(ctx);
+      }
+    }
+    return ctx;
+  }
+
+  private async runAfterChatPlugins(response: ChatResponse, context: MiddlewareContext): Promise<ChatResponse> {
+    let resp = response;
+    for (const plugin of this.plugins) {
+      if (plugin.hooks.onAfterChat) {
+        resp = await plugin.hooks.onAfterChat(resp, context);
+      }
+    }
+    return resp;
+  }
+
+  private async runErrorPlugins(error: Error, context: MiddlewareContext): Promise<void> {
+    for (const plugin of this.plugins) {
+      if (plugin.hooks.onError) {
+        await plugin.hooks.onError(error, context);
+      }
     }
   }
 
