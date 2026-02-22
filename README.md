@@ -6,6 +6,34 @@ A comprehensive framework for building multi-turn conversational AI applications
 
 > **📦 Starter Template** — This is a **starter template** for cloning, not an npm package. Use `git clone` or download the source to create your own chatbot application. This package is marked `private: true` and is not published to npm.
 
+---
+
+## ⚡ 30-Second Quick Start
+
+```bash
+# Clone template
+npx degit dcyfr/dcyfr-ai-chatbot my-chatbot
+cd my-chatbot
+
+# Install and run
+npm install
+npx tsx examples/simple-chat/index.ts
+# ✅ Chatbot running with mock provider
+```
+
+---
+
+## 🧭 Related Packages
+
+| Package | Purpose | Type |
+|---------|---------|------|
+| [@dcyfr/ai](../dcyfr-ai) | Core AI framework | npm package |
+| [@dcyfr/ai-agents](../dcyfr-ai-agents) | Autonomous agents | Template |
+| [@dcyfr/ai-react](../dcyfr-ai-react) | React UI template | Template |
+| [dcyfr-labs](../dcyfr-labs) | Production Next.js app | Application |
+
+---
+
 ## Features
 
 - **Multi-turn Conversations** — Persistent conversation history with threading
