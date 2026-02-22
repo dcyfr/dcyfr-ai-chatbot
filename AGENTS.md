@@ -42,3 +42,8 @@ Conversational AI chatbot template built on the DCYFR AI framework.
 - Zod for schema validation
 - Vitest for testing
 - Node.js ≥20
+
+## Quality Gates
+- TypeScript: 0 errors (`npm run typecheck`)
+- Tests: ≥99% pass rate (`npm run test`)
+- Lint: 0 errors (`npm run lint`)
