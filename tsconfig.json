@@ -10,6 +10,8 @@
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
+    "incremental": true,
+    "tsBuildInfoFile": "./dist/.tsbuildinfo",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
