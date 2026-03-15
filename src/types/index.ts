@@ -65,7 +65,7 @@ export const ToolDefinitionSchema = z.object({
   name: z.string(),
   description: z.string(),
   parameters: z.record(z.unknown()),
-  execute: z.function().args(z.record(z.unknown())).returns(z.promise(z.unknown())).optional(),
+  execute: z.function().optional(),
 });
 export type ToolDefinition = z.infer<typeof ToolDefinitionSchema>;
 
