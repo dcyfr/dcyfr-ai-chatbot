@@ -88,7 +88,7 @@
     "zod": "^4.3.6"
   },
   "peerDependencies": {
-    "@dcyfr/ai": "^2.1.0"
+    "@dcyfr/ai": "^3.0.1"
   },
   "peerDependenciesMeta": {
     "@dcyfr/ai": {
