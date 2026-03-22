@@ -9,7 +9,6 @@ import {
   ChatEngine,
   MockProvider,
   StreamCollector,
-  createStreamChunk,
 } from '../../src/index.js';
 
 async function main() {
@@ -39,6 +38,7 @@ async function main() {
 
   for await (const chunk of engine.stream({
     message: 'What is streaming?',
+    role: 'user',
     stream: true,
   })) {
     collector.add(chunk);

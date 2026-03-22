@@ -111,6 +111,8 @@ async function main() {
   // Chat with technical persona
   const response1 = await engine.chat({
     message: 'Can you calculate something for me?',
+    role: 'user',
+    stream: false,
   });
   console.log('User: Can you calculate something for me?');
   console.log(`Bot: ${response1.message.content}\n`);

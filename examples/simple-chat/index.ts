@@ -31,7 +31,7 @@ async function main() {
   console.log('=== Simple Chat Example ===\n');
 
   // First message
-  const response1 = await engine.chat({ message: 'Hello!' });
+  const response1 = await engine.chat({ message: 'Hello!', role: 'user', stream: false });
   console.log(`User: Hello!`);
   console.log(`Bot: ${response1.message.content}\n`);
 
@@ -39,6 +39,8 @@ async function main() {
   const response2 = await engine.chat({
     message: "What's the weather like?",
     conversationId: response1.conversationId,
+    role: 'user',
+    stream: false,
   });
   console.log(`User: What's the weather like?`);
   console.log(`Bot: ${response2.message.content}\n`);
@@ -47,6 +49,8 @@ async function main() {
   const response3 = await engine.chat({
     message: 'Bye!',
     conversationId: response1.conversationId,
+    role: 'user',
+    stream: false,
   });
   console.log(`User: Bye!`);
   console.log(`Bot: ${response3.message.content}\n`);

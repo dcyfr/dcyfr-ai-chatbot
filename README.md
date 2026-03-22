@@ -35,12 +35,12 @@ npx tsx examples/simple-chat/index.ts
 
 ## 🧭 Related Packages
 
-| Package | Purpose | Type |
-|---------|---------|------|
-| [@dcyfr/ai](../dcyfr-ai) | Core AI framework | npm package |
-| [@dcyfr/ai-agents](../dcyfr-ai-agents) | Autonomous agents | Template |
-| [@dcyfr/ai-react](../dcyfr-ai-react) | React UI template | Template |
-| [dcyfr-labs](../dcyfr-labs) | Production Next.js app | Application |
+| Package                                | Purpose                | Type        |
+| -------------------------------------- | ---------------------- | ----------- |
+| [@dcyfr/ai](../dcyfr-ai)               | Core AI framework      | npm package |
+| [@dcyfr/ai-agents](../dcyfr-ai-agents) | Autonomous agents      | Template    |
+| [@dcyfr/ai-react](../dcyfr-ai-react)   | React UI template      | Template    |
+| [dcyfr-labs](../dcyfr-labs)            | Production Next.js app | Application |
 
 ---
 
@@ -71,31 +71,33 @@ npx tsx examples/streaming-chat/index.ts
 npx tsx examples/advanced-chat/index.ts
 ```
 
+For a concise example catalog and run/type-check commands, see [`examples/README.md`](examples/README.md).
+
 ## Usage
 
 ### Basic Chat
 
 ```typescript
-import { ChatEngine, MockProvider } from '@dcyfr/ai-chatbot';
+import { ChatEngine, MockProvider } from "@dcyfr/ai-chatbot";
 
 const engine = new ChatEngine(
   {
-    model: 'gpt-4o',
-    systemPrompt: 'You are a helpful assistant.',
+    model: "gpt-4o",
+    systemPrompt: "You are a helpful assistant.",
     temperature: 0.7,
   },
-  new MockProvider()
+  new MockProvider(),
 );
 
-const response = await engine.chat({ message: 'Hello!' });
+const response = await engine.chat({ message: "Hello!" });
 console.log(response.message.content);
 ```
 
 ### Streaming
 
 ```typescript
-for await (const chunk of engine.stream({ message: 'Tell me a story' })) {
-  if (chunk.type === 'token') {
+for await (const chunk of engine.stream({ message: "Tell me a story" })) {
+  if (chunk.type === "token") {
     process.stdout.write(chunk.data as string);
   }
 }
@@ -110,18 +112,24 @@ import {
   createRateLimiter,
   createContentFilter,
   createLogger,
-} from '@dcyfr/ai-chatbot';
+} from "@dcyfr/ai-chatbot";
 
-const engine = new ChatEngine({ model: 'gpt-4o' }, new MockProvider());
+const engine = new ChatEngine({ model: "gpt-4o" }, new MockProvider());
 
 // Add rate limiting (60 requests/minute)
-engine.use(createRateLimiter({ maxRequests: 60, windowMs: 60000, strategy: 'token-bucket' }));
+engine.use(
+  createRateLimiter({
+    maxRequests: 60,
+    windowMs: 60000,
+    strategy: "token-bucket",
+  }),
+);
 
 // Add content filtering
-engine.use(createContentFilter({ useDefaults: true, blockSeverity: 'high' }));
+engine.use(createContentFilter({ useDefaults: true, blockSeverity: "high" }));
 
 // Add logging
-engine.use(createLogger({ level: 'info' }));
+engine.use(createLogger({ level: "info" }));
 ```
 
 ### With Personas
@@ -132,18 +140,18 @@ import {
   MockProvider,
   createSystemPromptPlugin,
   BUILT_IN_PERSONAS,
-} from '@dcyfr/ai-chatbot';
+} from "@dcyfr/ai-chatbot";
 
-const engine = new ChatEngine({ model: 'gpt-4o' }, new MockProvider());
+const engine = new ChatEngine({ model: "gpt-4o" }, new MockProvider());
 
 engine.registerPlugin(
   createSystemPromptPlugin({
     defaultPersona: BUILT_IN_PERSONAS.technical,
     variables: {
       date: () => new Date().toISOString(),
-      version: '1.0.0',
+      version: "1.0.0",
     },
-  })
+  }),
 );
 ```
 
@@ -155,20 +163,25 @@ import {
   MockProvider,
   createFunctionCallingPlugin,
   defineTool,
-} from '@dcyfr/ai-chatbot';
+} from "@dcyfr/ai-chatbot";
 
-const engine = new ChatEngine({ model: 'gpt-4o' }, new MockProvider());
+const engine = new ChatEngine({ model: "gpt-4o" }, new MockProvider());
 
 engine.registerPlugin(
   createFunctionCallingPlugin({
     tools: [
-      defineTool('get_weather', 'Get current weather', {
-        type: 'object',
-        properties: { city: { type: 'string' } },
-      }, async (args) => ({ temp: 72, city: args.city })),
+      defineTool(
+        "get_weather",
+        "Get current weather",
+        {
+          type: "object",
+          properties: { city: { type: "string" } },
+        },
+        async (args) => ({ temp: 72, city: args.city }),
+      ),
     ],
     autoExecute: true,
-  })
+  }),
 );
 ```
 
@@ -187,45 +200,45 @@ src/
 
 ### Module Overview
 
-| Module | Purpose |
-|--------|---------|
-| `chat/engine` | Core `ChatEngine` class — orchestrates the full lifecycle |
-| `chat/conversation` | `ConversationManager` — CRUD for conversation threads |
-| `chat/message` | Message creation, token estimation, truncation |
-| `memory/in-memory` | Simple Map-based storage (no eviction) |
-| `memory/sliding-window` | Keeps last N messages within token budget |
-| `memory/summary` | Summarizes old messages, keeps recent in full |
-| `streaming/stream-handler` | SSE formatting, `StreamCollector`, `StreamHandler` |
-| `streaming/token-streamer` | Buffered token emission with word boundaries |
-| `middleware/pipeline` | Composable middleware with priorities |
-| `middleware/rate-limiter` | Token bucket rate limiting |
-| `middleware/content-filter` | PII, injection, and content safety detection |
-| `middleware/logger` | Structured logging with `LogStore` for testing |
-| `providers/mock` | Deterministic responses for testing |
-| `providers/openai` | OpenAI-compatible API provider |
-| `plugins/plugin-manager` | Plugin lifecycle management |
-| `plugins/system-prompt` | Dynamic prompts with personas |
-| `plugins/function-calling` | Tool registration and execution |
+| Module                      | Purpose                                                   |
+| --------------------------- | --------------------------------------------------------- |
+| `chat/engine`               | Core `ChatEngine` class — orchestrates the full lifecycle |
+| `chat/conversation`         | `ConversationManager` — CRUD for conversation threads     |
+| `chat/message`              | Message creation, token estimation, truncation            |
+| `memory/in-memory`          | Simple Map-based storage (no eviction)                    |
+| `memory/sliding-window`     | Keeps last N messages within token budget                 |
+| `memory/summary`            | Summarizes old messages, keeps recent in full             |
+| `streaming/stream-handler`  | SSE formatting, `StreamCollector`, `StreamHandler`        |
+| `streaming/token-streamer`  | Buffered token emission with word boundaries              |
+| `middleware/pipeline`       | Composable middleware with priorities                     |
+| `middleware/rate-limiter`   | Token bucket rate limiting                                |
+| `middleware/content-filter` | PII, injection, and content safety detection              |
+| `middleware/logger`         | Structured logging with `LogStore` for testing            |
+| `providers/mock`            | Deterministic responses for testing                       |
+| `providers/openai`          | OpenAI-compatible API provider                            |
+| `plugins/plugin-manager`    | Plugin lifecycle management                               |
+| `plugins/system-prompt`     | Dynamic prompts with personas                             |
+| `plugins/function-calling`  | Tool registration and execution                           |
 
 ## Content Filter Rules
 
-| Rule | Type | Severity | Description |
-|------|------|----------|-------------|
-| `email-pii` | PII | Medium | Email address detection |
-| `phone-pii` | PII | Medium | Phone number detection |
-| `ssn-pii` | PII | Critical | SSN pattern detection |
-| `credit-card-pii` | PII | Critical | Credit card number detection |
-| `prompt-injection` | Injection | High | "Ignore previous instructions" patterns |
-| `system-prompt-extraction` | Injection | High | System prompt extraction attempts |
+| Rule                       | Type      | Severity | Description                             |
+| -------------------------- | --------- | -------- | --------------------------------------- |
+| `email-pii`                | PII       | Medium   | Email address detection                 |
+| `phone-pii`                | PII       | Medium   | Phone number detection                  |
+| `ssn-pii`                  | PII       | Critical | SSN pattern detection                   |
+| `credit-card-pii`          | PII       | Critical | Credit card number detection            |
+| `prompt-injection`         | Injection | High     | "Ignore previous instructions" patterns |
+| `system-prompt-extraction` | Injection | High     | System prompt extraction attempts       |
 
 ## Built-in Personas
 
-| Persona | Temperature | Description |
-|---------|-------------|-------------|
-| `helpful` | 0.7 | Friendly, clear, and honest |
-| `technical` | 0.3 | Precise, code-focused, thorough |
-| `creative` | 1.0 | Imaginative, expressive, unconventional |
-| `concise` | 0.5 | Brief, direct, bullet-pointed |
+| Persona     | Temperature | Description                             |
+| ----------- | ----------- | --------------------------------------- |
+| `helpful`   | 0.7         | Friendly, clear, and honest             |
+| `technical` | 0.3         | Precise, code-focused, thorough         |
+| `creative`  | 1.0         | Imaginative, expressive, unconventional |
+| `concise`   | 0.5         | Brief, direct, bullet-pointed           |
 
 ## Development
 
@@ -246,10 +259,10 @@ npm run test:coverage
 ## Compatibility
 
 | Dependency | Version |
-|-----------|---------|
-| Node.js | ≥20.0.0 |
-| TypeScript | ~5.7 |
-| Zod | ^3.23 |
+| ---------- | ------- |
+| Node.js    | ≥20.0.0 |
+| TypeScript | ~5.7    |
+| Zod        | ^3.23   |
 
 ## License
 
