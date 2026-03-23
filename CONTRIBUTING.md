@@ -1,5 +1,19 @@
 # Contributing to @dcyfr/ai-chatbot
 
+## Licensing & Contributions
+
+By contributing to `@dcyfr/ai-chatbot`, you agree that:
+
+- Your contributions will be licensed under the project's MIT License
+- You have the right to submit the contribution under this license
+- You grant DCYFR Labs perpetual rights to use, modify, and distribute your contribution
+
+### Trademark
+
+Do not use "DCYFR" trademarks in ways that imply endorsement without permission. See [../TRADEMARK.md](../TRADEMARK.md) for usage guidelines.
+
+**Questions?** Contact [licensing@dcyfr.ai](mailto:licensing@dcyfr.ai)
+
 ## Development Setup
 
 ```bash
@@ -19,18 +33,21 @@ npm run test:run
 ## Adding Features
 
 ### New Provider
+
 1. Create `src/providers/my-provider.ts`
 2. Implement `ChatProvider` interface
 3. Export from `src/providers/index.ts`
 4. Add tests in `tests/unit/providers/`
 
 ### New Middleware
+
 1. Create `src/middleware/my-middleware.ts`
 2. Export factory function
 3. Export from `src/middleware/index.ts`
 4. Add tests
 
 ### New Plugin
+
 1. Create `src/plugins/my-plugin.ts`
 2. Implement `Plugin` interface
 3. Export from `src/plugins/index.ts`
