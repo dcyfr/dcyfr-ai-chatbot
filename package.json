@@ -78,11 +78,11 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/dcyfr/dcyfr-ai-chatbot.git"
+    "url": "https://github.com/dcyfr-labs/dcyfr-ai-chatbot.git"
   },
-  "homepage": "https://github.com/dcyfr/dcyfr-ai-chatbot#readme",
+  "homepage": "https://github.com/dcyfr-labs/dcyfr-ai-chatbot#readme",
   "bugs": {
-    "url": "https://github.com/dcyfr/dcyfr-ai-chatbot/issues"
+    "url": "https://github.com/dcyfr-labs/dcyfr-ai-chatbot/issues"
   },
   "publishConfig": {
     "access": "public"
