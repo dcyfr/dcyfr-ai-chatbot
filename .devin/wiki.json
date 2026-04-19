@@ -1,0 +1,8 @@
+{
+  "repo_notes": [
+    {
+      "content": "Chatbot implementation using the DCYFR AI framework. Document the conversation management, message routing, context handling, and integration patterns for building conversational AI interfaces.",
+      "author": "DCYFR Engineering"
+    }
+  ]
+}
